@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Discord_Bot_Tutorial.Migrations
 {
     [DbContext(typeof(SqliteContext))]
-    [Migration("20200529223656_QueueMigration")]
-    partial class QueueMigration
+    [Migration("20200530211224_InitializeSqliteDB")]
+    partial class InitializeSqliteDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,6 +29,12 @@ namespace Discord_Bot_Tutorial.Migrations
                     b.Property<bool>("queue")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("queueSr")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("role")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("support")
                         .HasColumnType("INTEGER");
 
@@ -44,6 +50,29 @@ namespace Discord_Bot_Tutorial.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Profiles");
+                });
+
+            modelBuilder.Entity("Discord_Bot_Tutorial.Models.Queue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("queueSr")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("role")
+                        .HasColumnType("TEXT");
+
+                    b.Property<ulong>("userID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("userName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("playerQueue");
                 });
 #pragma warning restore 612, 618
         }

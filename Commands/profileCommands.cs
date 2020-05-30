@@ -188,7 +188,5 @@ namespace Discord_Bot_Tutorial.Commands
                 await ctx.Channel.SendMessageAsync("No profile found.");
             }
         }
-
-
     }
 }

@@ -48,7 +48,7 @@ namespace Discord_Bot_Tutorial.Commands
                     string message = "List of players queued" + "```";
                     foreach (var player in queue)
                     {
-                        message = message + "\n" + $"{player.userName,-10} : {player.role,10}";
+                        message = message + "\n" + $"{player.userName,-25} : {player.role,10}";
                     }
 
                     await ctx.Channel.SendMessageAsync(message + "```");
@@ -81,12 +81,27 @@ namespace Discord_Bot_Tutorial.Commands
                             profile.queue = true;
                             profile.role = role;
 
+                            if (role == "dps")
+                            {
+                                profile.queueSr = profile.dps;
+                            }
+                            else if (role == "tank")
+                            {
+                                profile.queueSr = profile.tank;
+                            }
+                            else
+                            {
+                                profile.queueSr = profile.support;
+                            }
+
                             var newPlayer = new Queue();
                             newPlayer.role = role;
                             newPlayer.userID = author;
                             newPlayer.userName = ctx.User.Username;
+                            newPlayer.queueSr = profile.queueSr;
 
                             queue.Add(newPlayer);
+
                             await lite.SaveChangesAsync();
 
                             await ctx.Channel.SendMessageAsync($"{ctx.User.Mention} Added to queue. Role: {role}.");
@@ -122,6 +137,7 @@ namespace Discord_Bot_Tutorial.Commands
                             {
                                 profile.role = null;
                                 profile.queue = false;
+                                profile.queueSr = 0;
                                 queue.Remove(player);
 
                                 await lite.SaveChangesAsync();
@@ -150,7 +166,7 @@ namespace Discord_Bot_Tutorial.Commands
                 {
                     profile.role = null;
                     profile.queue = false;
-
+                    profile.queueSr = 0;
 
                     await lite.SaveChangesAsync();
                 }
@@ -166,6 +182,19 @@ namespace Discord_Bot_Tutorial.Commands
             }
         }
 
+        [Command("mm")]
+        public async Task Matchmaking(CommandContext ctx)
+        {
+            using (SqliteContext lite = new SqliteContext())
+            {
+                var allProfiles = lite.Profiles;
+                var queue = lite.playerQueue;
 
+                if (queue.Count() < 12)
+                {
+                    await ctx.Channel.SendMessageAsync($"Not enough players queued. Need {12 - queue.Count()} players.");
+                }
+            }
+        }
     }
 }

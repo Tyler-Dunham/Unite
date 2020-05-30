@@ -27,6 +27,9 @@ namespace Discord_Bot_Tutorial.Migrations
                     b.Property<bool>("queue")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("queueSr")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("role")
                         .HasColumnType("TEXT");
 
@@ -53,10 +56,13 @@ namespace Discord_Bot_Tutorial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("queueSr")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("role")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("userID")
+                    b.Property<ulong>("userID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("userName")

@@ -13,5 +13,6 @@ namespace Discord_Bot_Tutorial.Models
         public int support { get; set; }
         public bool queue { get; set; }
         public string role { get; set; }
+        public int queueSr { get; set; }
     }
 }

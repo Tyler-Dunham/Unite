@@ -14,6 +14,7 @@ namespace Discord_Bot_Tutorial.Commands
     class dbCommands : BaseCommandModule
     {
         [Command("migrate")]
+        [Description("Finish migrations.")]
         public async Task MigrateLite(CommandContext ctx)
         {
             try

@@ -1,4 +1,6 @@
 ﻿using Discord_Bot_Tutorial.Commands;
+using Discord_Bot_Tutorial.Context;
+using Discord_Bot_Tutorial.Models;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.EventArgs;

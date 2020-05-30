@@ -11,5 +11,7 @@ namespace Discord_Bot_Tutorial.Models
         public int dps { get; set; }
         public int tank { get; set; }
         public int support { get; set; }
+        public bool queue { get; set; }
+        public string role { get; set; }
     }
 }

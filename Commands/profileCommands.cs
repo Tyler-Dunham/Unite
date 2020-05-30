@@ -31,6 +31,7 @@ namespace Discord_Bot_Tutorial.Commands
                         _profile.tank = tank;
                         _profile.support = support;
                         _profile.userName = ctx.Message.Author.Username;
+                        _profile.queue = false;
 
                         await lite.SaveChangesAsync();
 
@@ -45,6 +46,7 @@ namespace Discord_Bot_Tutorial.Commands
                 profile.dps = dps;
                 profile.tank = tank;
                 profile.support = support;
+                profile.queue = false;
 
                 lite.Profiles.Add(profile);
                 await lite.SaveChangesAsync();
@@ -67,7 +69,8 @@ namespace Discord_Bot_Tutorial.Commands
                     if (_profile.userID == author)
                     {
                         _profile.dps = dps;
-                        _profile.userName = ctx.Message.Author.Username;
+                        _profile.userName = ctx.Message.Author.Username; 
+                        _profile.queue = false;
 
                         await lite.SaveChangesAsync();
 
@@ -80,6 +83,7 @@ namespace Discord_Bot_Tutorial.Commands
                 profile.userID = ctx.Message.Author.Id;
                 profile.userName = ctx.Message.Author.Username;
                 profile.dps = dps;
+                profile.queue = false;
 
                 lite.Profiles.Add(profile);
                 await lite.SaveChangesAsync();
@@ -103,6 +107,7 @@ namespace Discord_Bot_Tutorial.Commands
                     {
                         _profile.tank = tank;
                         _profile.userName = ctx.Message.Author.Username;
+                        _profile.queue = false;
 
                         await lite.SaveChangesAsync();
 
@@ -115,6 +120,7 @@ namespace Discord_Bot_Tutorial.Commands
                 profile.userID = ctx.Message.Author.Id;
                 profile.userName = ctx.Message.Author.Username;
                 profile.tank = tank;
+                profile.queue = false;
 
                 lite.Profiles.Add(profile);
                 await lite.SaveChangesAsync();
@@ -138,6 +144,7 @@ namespace Discord_Bot_Tutorial.Commands
                     {
                         _profile.support = support;
                         _profile.userName = ctx.Message.Author.Username;
+                        _profile.queue = false;
 
                         await lite.SaveChangesAsync();
 
@@ -150,6 +157,7 @@ namespace Discord_Bot_Tutorial.Commands
                 profile.userID = ctx.Message.Author.Id;
                 profile.userName = ctx.Message.Author.Username;
                 profile.support = support;
+                profile.queue = false;
 
                 lite.Profiles.Add(profile);
                 await lite.SaveChangesAsync();

@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <None Include="bin\Debug\netcoreapp3.1\config.json" />
-    <None Include="bin\Debug\netcoreapp3.1\data.json" />
   </ItemGroup>
 
   <ItemGroup>

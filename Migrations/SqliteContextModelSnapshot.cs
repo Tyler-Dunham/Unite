@@ -24,6 +24,12 @@ namespace Discord_Bot_Tutorial.Migrations
                     b.Property<int>("dps")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("queue")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("role")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("support")
                         .HasColumnType("INTEGER");
 
@@ -39,6 +45,26 @@ namespace Discord_Bot_Tutorial.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Profiles");
+                });
+
+            modelBuilder.Entity("Discord_Bot_Tutorial.Models.Queue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("role")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("userID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("userName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("playerQueue");
                 });
 #pragma warning restore 612, 618
         }

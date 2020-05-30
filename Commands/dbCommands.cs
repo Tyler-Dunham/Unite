@@ -14,7 +14,6 @@ namespace Discord_Bot_Tutorial.Commands
     class dbCommands : BaseCommandModule
     {
         [Command("migrate")]
-        [RequirePermissions(Permissions.Administrator)]
         public async Task MigrateLite(CommandContext ctx)
         {
             try

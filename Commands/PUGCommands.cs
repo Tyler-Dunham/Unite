@@ -26,6 +26,7 @@ namespace Discord_Bot_Tutorial.Commands
     {
         [Command("q")]
         [Aliases("queue")]
+        [Description("Join the queue, in order to change roles, leave the queue first.")]
         public async Task Q(CommandContext ctx, string role="view")
         {
             using (SqliteContext lite = new SqliteContext())
@@ -102,6 +103,7 @@ namespace Discord_Bot_Tutorial.Commands
 
         [Command("leave")]
         [Aliases("l")]
+        [Description("Leave the queue.")]
         public async Task Leave(CommandContext ctx)
         {
             using (SqliteContext lite = new SqliteContext())
@@ -134,5 +136,36 @@ namespace Discord_Bot_Tutorial.Commands
                 await ctx.Channel.SendMessageAsync($"{ ctx.User.Mention} you are not in queue");
             }
         }
+
+        [Command("clear")]
+        [Description("Clear the queue.")]
+        public async Task Clear(CommandContext ctx)
+        {
+            using (SqliteContext lite = new SqliteContext())
+            {
+                var allProfiles = lite.Profiles;
+                var queue = lite.playerQueue;
+
+                foreach (var profile in allProfiles)
+                {
+                    profile.role = null;
+                    profile.queue = false;
+
+
+                    await lite.SaveChangesAsync();
+                }
+
+                foreach (var player in queue)
+                {
+                    queue.Remove(player);
+
+                    await lite.SaveChangesAsync();
+                }
+
+                await ctx.Channel.SendMessageAsync("Queue has been cleared.");
+            }
+        }
+
+
     }
 }

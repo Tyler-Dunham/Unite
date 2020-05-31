@@ -110,7 +110,8 @@ namespace Discord_Bot_Tutorial.Commands
 
                                 profile.queueSr = profile.dps;
                                 dps++;
-                                    
+
+                                await ctx.Channel.SendMessageAsync($"DPS: {dps}");
                                 
                                 if (dps == 4)
                                 {

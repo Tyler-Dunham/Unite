@@ -24,6 +24,10 @@ namespace Discord_Bot_Tutorial.Commands
 {
     class PUGCommands : BaseCommandModule
     {
+        int dps = 0;
+        int tank = 0;
+        int support = 0;
+
         [Command("q")]
         [Aliases("queue")]
         [Description("Join the queue, in order to change roles, leave the queue first.")]
@@ -36,6 +40,7 @@ namespace Discord_Bot_Tutorial.Commands
                 var author = ctx.Message.Author.Id;
                 var queue = lite.playerQueue;
                 var allProfiles = lite.Profiles;
+
 
                 if (role == "view")
                 {
@@ -56,16 +61,26 @@ namespace Discord_Bot_Tutorial.Commands
 
                 }
 
+
+                //Handles valid role responses
+                //Checks if already in queue, if so, leaves and rejoins to avoid dupes
+                //Keeps track of amount of each role
+                //Tells you x/4 for each role after a valid role has been entered
                 else if (responses.Contains(role.ToLower()))
                 {
+                    //Goes through each profile in allProfiles to see if it can find you 
+                    //If it finds you, it add you to queue
                     foreach (var profile in allProfiles)
                     {
+                        //Finds match in profiles
                         if (profile.userID == author)
                         {
+                            //Checks if already in queue
                             if (profile.queue == true)
                             {
                                 foreach (var player in queue)
                                 {
+                                    //Finds a match
                                     if (player.userID == author)
                                     {
                                         queue.Remove(player);
@@ -78,20 +93,65 @@ namespace Discord_Bot_Tutorial.Commands
                                 }
                             }
 
+                            //If not in queue, add you to the queue.
                             profile.queue = true;
                             profile.role = role;
 
+                            var counter = new Queue();
+
+                            //If role == dps
                             if (role == "dps")
                             {
+                                if (dps == 4)
+                                {
+                                    await ctx.Channel.SendMessageAsync("DPS slots are filled.");
+                                    return;
+                                }
+
                                 profile.queueSr = profile.dps;
+                                dps++;
+                                    
+                                
+                                if (dps == 4)
+                                {
+                                    await ctx.Channel.SendMessageAsync("4/4 DPS slots are filled.");
+                                }
                             }
+
+                            //If role == tank
                             else if (role == "tank")
                             {
+                                if (tank == 4)
+                                {
+                                    await ctx.Channel.SendMessageAsync("Tank slots are filled.");
+                                    return;
+                                }
+
                                 profile.queueSr = profile.tank;
+                                tank++;
+
+                                if (tank == 4)
+                                {
+                                    await ctx.Channel.SendMessageAsync("4/4 tank slots are filled.");
+                                }
                             }
+
+                            //If role == support
                             else
                             {
+                                if (support == 4)
+                                {
+                                    await ctx.Channel.SendMessageAsync("Support slots are filled.");
+                                    return;
+                                }
+
                                 profile.queueSr = profile.support;
+                                support++;
+
+                                if (support == 4)
+                                {
+                                    await ctx.Channel.SendMessageAsync("4/4 support slots are filled.");
+                                }
                             }
 
                             var newPlayer = new Queue();
@@ -135,6 +195,19 @@ namespace Discord_Bot_Tutorial.Commands
                         {
                             if (profile.userID == author)
                             {
+                                if (player.role == "dps")
+                                {
+                                    dps--;
+                                }
+                                if (player.role == "tank")
+                                {
+                                    tank--;
+                                }
+                                if (player.role == "support")
+                                {
+                                    support--;
+                                }
+
                                 profile.role = null;
                                 profile.queue = false;
                                 profile.queueSr = 0;
@@ -143,6 +216,7 @@ namespace Discord_Bot_Tutorial.Commands
                                 await lite.SaveChangesAsync();
 
                                 await ctx.Channel.SendMessageAsync("You have left the queue");
+
                                 return;
                             }
                         }
@@ -178,22 +252,11 @@ namespace Discord_Bot_Tutorial.Commands
                     await lite.SaveChangesAsync();
                 }
 
+                dps = 0;
+                tank = 0;
+                support = 0;
+
                 await ctx.Channel.SendMessageAsync("Queue has been cleared.");
-            }
-        }
-
-        [Command("mm")]
-        public async Task Matchmaking(CommandContext ctx)
-        {
-            using (SqliteContext lite = new SqliteContext())
-            {
-                var allProfiles = lite.Profiles;
-                var queue = lite.playerQueue;
-
-                if (queue.Count() < 12)
-                {
-                    await ctx.Channel.SendMessageAsync($"Not enough players queued. Need {12 - queue.Count()} players.");
-                }
             }
         }
     }

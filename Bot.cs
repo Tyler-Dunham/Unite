@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,6 +63,7 @@ namespace Discord_Bot_Tutorial
             Commands.RegisterCommands<profileCommands>();
             Commands.RegisterCommands<PUGCommands>();
             Commands.RegisterCommands<dbCommands>();
+            Commands.RegisterCommands<Matchmaking>();
             
 
             await Client.ConnectAsync();

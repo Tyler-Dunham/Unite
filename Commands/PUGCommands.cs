@@ -131,6 +131,8 @@ namespace Discord_Bot_Tutorial.Commands
                                 profile.queueSr = profile.tank;
                                 tank++;
 
+                                await ctx.Channel.SendMessageAsync($"Tanks: {tank}");
+
                                 if (tank == 4)
                                 {
                                     await ctx.Channel.SendMessageAsync("4/4 tank slots are filled.");
@@ -148,6 +150,8 @@ namespace Discord_Bot_Tutorial.Commands
 
                                 profile.queueSr = profile.support;
                                 support++;
+
+                                await ctx.Channel.SendMessageAsync($"Support: {support}");
 
                                 if (support == 4)
                                 {

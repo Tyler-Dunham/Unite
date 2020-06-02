@@ -31,7 +31,7 @@ namespace Discord_Bot_Tutorial.Commands
         [Command("q")]
         [Aliases("queue")]
         [Description("Join the queue, in order to change roles, leave the queue first.")]
-        public async Task Q(CommandContext ctx, string role="view")
+        public async Task Q(CommandContext ctx, string role = "view")
         {
             using (SqliteContext lite = new SqliteContext())
             {
@@ -111,8 +111,6 @@ namespace Discord_Bot_Tutorial.Commands
                                 profile.queueSr = profile.dps;
                                 dps++;
 
-                                await ctx.Channel.SendMessageAsync($"DPS: {dps}");
-                                
                                 if (dps == 4)
                                 {
                                     await ctx.Channel.SendMessageAsync("4/4 DPS slots are filled.");
@@ -131,8 +129,6 @@ namespace Discord_Bot_Tutorial.Commands
                                 profile.queueSr = profile.tank;
                                 tank++;
 
-                                await ctx.Channel.SendMessageAsync($"Tanks: {tank}");
-
                                 if (tank == 4)
                                 {
                                     await ctx.Channel.SendMessageAsync("4/4 tank slots are filled.");
@@ -150,8 +146,6 @@ namespace Discord_Bot_Tutorial.Commands
 
                                 profile.queueSr = profile.support;
                                 support++;
-
-                                await ctx.Channel.SendMessageAsync($"Support: {support}");
 
                                 if (support == 4)
                                 {
@@ -263,6 +257,24 @@ namespace Discord_Bot_Tutorial.Commands
 
                 await ctx.Channel.SendMessageAsync("Queue has been cleared.");
             }
+        }
+
+        [Command("map")]
+        [Description("Picks a map.")]
+        public async Task PickMap(CommandContext ctx)
+        {
+            string[] maps = {"Blizzard World", "Busan", "Dorado", "Eichenwalde", "Hanamura",
+                        "Havana", "Hollywood", "Ilios", "Junkertown", "Kings Row", "Lijiang Tower",
+                    "Nepal", "Numbani", "Oasis", "Rialto", "Route 66", "Temple of Anubis",
+                    "Volskaya Industries", "Watchpoint: Gibraltar"};
+
+
+            Random rnd = new Random();
+            int i = rnd.Next(0, maps.Length + 1);
+
+            string map = maps[i];
+
+            await ctx.Channel.SendMessageAsync($"Map: {map}");
         }
     }
 }

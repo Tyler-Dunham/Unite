@@ -15,6 +15,7 @@ namespace Discord_Bot_Tutorial.Commands
     class Matchmaking : BaseCommandModule
     {
         [Command("mm")]
+        [Description("Generates fairly balanced teams.")]
         public async Task MM(CommandContext ctx)
         {
             List<Queue> dpsTeamList = new List<Queue>();
@@ -69,6 +70,17 @@ namespace Discord_Bot_Tutorial.Commands
                 var Team1Average = Math.Round(Team1.Average(i => i.queueSr));
                 var Team2Average = Math.Round(Team2.Average(i => i.queueSr));
 
+                string[] maps = {"Blizzard World", "Busan", "Dorado", "Eichenwalde", "Hanamura", 
+                        "Havana", "Hollywood", "Ilios", "Junkertown", "Kings Row", "Lijiang Tower", 
+                    "Nepal", "Numbani", "Oasis", "Rialto", "Route 66", "Temple of Anubis", 
+                    "Volskaya Industries", "Watchpoint: Gibraltar"};
+
+
+                Random rnd = new Random();
+                int i = rnd.Next(0, maps.Length + 1);
+
+                string map = maps[i];
+
                 string Team1Message = "```" + $"Team 1: ";
                 string Team2Message = "Team 2: ";
 
@@ -84,7 +96,8 @@ namespace Discord_Bot_Tutorial.Commands
 
                 await ctx.Channel.SendMessageAsync(Team1Message + "\n" + "\n" + Team2Message
                     + "\n" + "\n" + $"Team 1 Average : {Team1Average, 10}"
-                    + "\n" + $"Team 2 Average: { Team2Average, 10}" +
+                    + "\n" + $"Team 2 Average: { Team2Average, 10}"
+                    + "\n" + "\n" + $"Map: {map}" +
                     "```");
             }
         }

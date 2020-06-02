@@ -248,6 +248,8 @@ namespace Discord_Bot_Tutorial.Commands
                     supportTeamList.Remove(player);
                 }
 
+                //Send Confirmation message
+                await ctx.Channel.SendMessageAsync("Sr's have been updated.");
             }
         }
     }

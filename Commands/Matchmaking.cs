@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -18,9 +17,9 @@ namespace Discord_Bot_Tutorial.Commands
         [Command("mm")]
         public async Task MM(CommandContext ctx)
         {
-            List<Queue> dpsTeam = new List<Queue>();
-            List<Queue> tankTeam = new List<Queue>();
-            List<Queue> supportTeam = new List<Queue>();
+            List<Queue> dpsTeamList = new List<Queue>();
+            List<Queue> tankTeamList = new List<Queue>();
+            List<Queue> supportTeamList = new List<Queue>();
 
             using (SqliteContext lite = new SqliteContext())
             {
@@ -38,22 +37,22 @@ namespace Discord_Bot_Tutorial.Commands
                 {
                     if (player.role == "dps")
                     {
-                        dpsTeam.Add(player);
+                        dpsTeamList.Add(player);
                     }
                     else if (player.role == "tank")
                     {
-                        tankTeam.Add(player);
+                        tankTeamList.Add(player);
                     }
                     else //player.role == support
                     {
-                        supportTeam.Add(player);
+                        supportTeamList.Add(player);
                     }
                 }
 
                 //For each role team, find the highest and lowest value, pair them, then the remaining two are the last
-                dpsTeam.OrderByDescending(i => i.queueSr);
-                tankTeam.OrderByDescending(i => i.queueSr);
-                supportTeam.OrderByDescending(i => i.queueSr);
+                Queue[] dpsTeam = dpsTeamList.OrderByDescending(i => i.queueSr).ToArray();
+                Queue[] tankTeam = tankTeamList.OrderByDescending(i => i.queueSr).ToArray();
+                Queue[] supportTeam = supportTeamList.OrderByDescending(i => i.queueSr).ToArray();
 
                 List<Queue> dpspair1 = new List<Queue>{ dpsTeam[0], dpsTeam[3] };
                 List<Queue> dpspair2 = new List<Queue> { dpsTeam[1], dpsTeam[2] };
@@ -67,8 +66,8 @@ namespace Discord_Bot_Tutorial.Commands
                 List<Queue> Team1 = dpspair1.Concat(tankpair1).Concat(supportpair1).ToList();
                 List<Queue> Team2 = dpspair2.Concat(tankpair2).Concat(supportpair2).ToList();
 
-                var Team1Average = Team1.Average(i => i.queueSr);
-                var Team2Average = Team2.Average(i => i.queueSr);
+                var Team1Average = Math.Round(Team1.Average(i => i.queueSr));
+                var Team2Average = Math.Round(Team2.Average(i => i.queueSr));
 
                 string Team1Message = "```" + $"Team 1: ";
                 string Team2Message = "Team 2: ";
@@ -84,11 +83,10 @@ namespace Discord_Bot_Tutorial.Commands
                 }
 
                 await ctx.Channel.SendMessageAsync(Team1Message + "\n" + "\n" + Team2Message
-                    + "\n" + $"Team 1 Average : {Team1Average, 10}"
+                    + "\n" + "\n" + $"Team 1 Average : {Team1Average, 10}"
                     + "\n" + $"Team 2 Average: { Team2Average, 10}" +
                     "```");
             }
-
         }
     }
 }

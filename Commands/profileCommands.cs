@@ -23,6 +23,12 @@ namespace Discord_Bot_Tutorial.Commands
                 var allProfiles = lite.Profiles;
                 ulong author = ctx.Message.Author.Id;
 
+                if (dps > 5000 || dps < 0 || tank > 5000 || tank < 0 || support > 5000 || support < 0)
+                {
+                    await ctx.Channel.SendMessageAsync("Invalid sr.");
+                    return;
+                }
+
                 foreach (var _profile in allProfiles)
                 {
                     if (_profile.userID == author)
@@ -64,6 +70,12 @@ namespace Discord_Bot_Tutorial.Commands
                 var allProfiles = lite.Profiles;
                 ulong author = ctx.Message.Author.Id;
 
+                if (dps > 5000 || dps < 0)
+                {
+                    await ctx.Channel.SendMessageAsync("Invalid sr.");
+                    return;
+                }
+
                 foreach (var _profile in allProfiles)
                 {
                     if (_profile.userID == author)
@@ -101,6 +113,12 @@ namespace Discord_Bot_Tutorial.Commands
                 var allProfiles = lite.Profiles;
                 ulong author = ctx.Message.Author.Id;
 
+                if (tank > 5000 || tank < 0)
+                {
+                    await ctx.Channel.SendMessageAsync("Invalid sr.");
+                    return;
+                }
+
                 foreach (var _profile in allProfiles)
                 {
                     if (_profile.userID == author)
@@ -137,6 +155,12 @@ namespace Discord_Bot_Tutorial.Commands
             {
                 var allProfiles = lite.Profiles;
                 ulong author = ctx.Message.Author.Id;
+
+                if (support > 5000 || support < 0)
+                {
+                    await ctx.Channel.SendMessageAsync("Invalid sr.");
+                    return;
+                }
 
                 foreach (var _profile in allProfiles)
                 {

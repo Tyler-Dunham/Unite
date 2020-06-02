@@ -274,7 +274,7 @@ namespace Discord_Bot_Tutorial.Commands
 
             string map = maps[i];
 
-            await ctx.Channel.SendMessageAsync($"Map: {map}");
+            await ctx.Channel.SendMessageAsync($"{map}");
         }
     }
 }

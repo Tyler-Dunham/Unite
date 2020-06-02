@@ -14,14 +14,29 @@ namespace Discord_Bot_Tutorial.Commands
 {
     class Matchmaking : BaseCommandModule
     {
+        bool game = false;
+
+        static List<Queue> dpsTeamList = new List<Queue>();
+        static List<Queue> tankTeamList = new List<Queue>();
+        static List<Queue> supportTeamList = new List<Queue>();
+
+        static Queue[] dpsTeam { get { return dpsTeamList.OrderByDescending(i => i.queueSr).ToArray(); } }
+        static Queue[] tankTeam { get { return tankTeamList.OrderByDescending(i => i.queueSr).ToArray(); } }
+        static Queue[] supportTeam { get { return supportTeamList.OrderByDescending(i => i.queueSr).ToArray(); } }
+
+        static List<Queue> dpspair1 { get { Queue[] team = dpsTeam; return new List<Queue> { team[0], team[3] }; } }
+        static List<Queue> dpspair2 { get { Queue[] team = dpsTeam; return new List<Queue> { team[1], team[2] }; } }
+        static List<Queue> tankpair1 { get { Queue[] team = tankTeam; return new List<Queue> { team[0], team[3] }; } }
+        static List<Queue> tankpair2 { get { Queue[] team = tankTeam; return new List<Queue> { team[1], team[2] }; } }
+        static List<Queue> supportpair1 { get { Queue[] team = supportTeam; return new List<Queue> { team[0], team[3] }; } }
+        static List<Queue> supportpair2 { get { Queue[] team = supportTeam; return new List<Queue> { team[1], team[2] }; } }
+        static List<Queue> Team1 { get {return dpspair1.Concat(tankpair1).Concat(supportpair1).ToList(); } }
+        static List<Queue> Team2 { get { return dpspair2.Concat(tankpair2).Concat(supportpair2).ToList(); } }
+
         [Command("mm")]
         [Description("Generates fairly balanced teams.")]
         public async Task MM(CommandContext ctx)
         {
-            List<Queue> dpsTeamList = new List<Queue>();
-            List<Queue> tankTeamList = new List<Queue>();
-            List<Queue> supportTeamList = new List<Queue>();
-
             using (SqliteContext lite = new SqliteContext())
             {
                 var allProfiles = lite.Profiles;
@@ -51,21 +66,7 @@ namespace Discord_Bot_Tutorial.Commands
                 }
 
                 //For each role team, find the highest and lowest value, pair them, then the remaining two are the last
-                Queue[] dpsTeam = dpsTeamList.OrderByDescending(i => i.queueSr).ToArray();
-                Queue[] tankTeam = tankTeamList.OrderByDescending(i => i.queueSr).ToArray();
-                Queue[] supportTeam = supportTeamList.OrderByDescending(i => i.queueSr).ToArray();
 
-                List<Queue> dpspair1 = new List<Queue>{ dpsTeam[0], dpsTeam[3] };
-                List<Queue> dpspair2 = new List<Queue> { dpsTeam[1], dpsTeam[2] };
-
-                List<Queue> tankpair1 = new List<Queue> { tankTeam[0], tankTeam[3] };
-                List<Queue> tankpair2 = new List<Queue> { tankTeam[1], tankTeam[2] };
-
-                List<Queue> supportpair1 = new List<Queue> { supportTeam[0], supportTeam[3] };
-                List<Queue> supportpair2 = new List<Queue>{ supportTeam[1], supportTeam[2] };
-
-                List<Queue> Team1 = dpspair1.Concat(tankpair1).Concat(supportpair1).ToList();
-                List<Queue> Team2 = dpspair2.Concat(tankpair2).Concat(supportpair2).ToList();
 
                 var Team1Average = Math.Round(Team1.Average(i => i.queueSr));
                 var Team2Average = Math.Round(Team2.Average(i => i.queueSr));
@@ -97,8 +98,156 @@ namespace Discord_Bot_Tutorial.Commands
                 await ctx.Channel.SendMessageAsync(Team1Message + "\n" + "\n" + Team2Message
                     + "\n" + "\n" + $"Team 1 Average : {Team1Average, 10}"
                     + "\n" + $"Team 2 Average: { Team2Average, 10}"
-                    + "\n" + "\n" + $"Map: {map}" +
+                    + "\n" + "\n" + $"{map}" +
                     "```");
+
+                game = true;
+            }
+        }
+
+        [Command("win")]
+        public async Task Win(CommandContext ctx, int winner)
+        {
+            if (game == false)
+            {
+                await ctx.Channel.SendMessageAsync("A game is not in progress.");
+                return;
+            }
+            if (winner != 0 || winner != 1 || winner != 2)
+            {
+                await ctx.Channel.SendMessageAsync("Not a valid winner.");
+                return;
+            }
+
+            using (SqliteContext lite = new SqliteContext())
+            {
+                var allProfiles = lite.Profiles;
+                var queue = lite.playerQueue;
+
+                //Draw
+                if (winner == 0)
+                {
+                    await ctx.Channel.SendMessageAsync("The game was a tie.");
+                    return;
+                }
+                //Team 1 wins
+                else if (winner == 1)
+                {
+                    foreach (var profile in allProfiles)
+                    {
+                        foreach (var player in Team1)
+                        {
+                            if (profile.userID == player.userID)
+                            {
+                                if (profile.role == "dps")
+                                {
+                                    profile.dps = profile.dps + 50;
+                                }
+                                else if (profile.role == "tank")
+                                {
+                                    profile.tank = profile.tank + 50;
+                                }
+                                else if (profile.role == "support")
+                                {
+                                    profile.support = profile.support + 50;
+                                }
+                            }
+                        }
+
+                        foreach (var player in Team2)
+                        {
+                            if (profile.userID == player.userID)
+                            {
+                                if (profile.role == "dps")
+                                {
+                                    profile.dps = profile.dps - 50;
+                                }
+                                else if (profile.role == "tank")
+                                {
+                                    profile.tank = profile.tank - 50;
+                                }
+                                else if (profile.role == "support")
+                                {
+                                    profile.support = profile.support - 50;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Team 2 wins
+                else
+                {
+                    foreach (var profile in allProfiles)
+                    {
+                        foreach (var player in Team2)
+                        {
+                            if (profile.userID == player.userID)
+                            {
+                                if (profile.role == "dps")
+                                {
+                                    profile.dps = profile.dps + 50;
+                                }
+                                else if (profile.role == "tank")
+                                {
+                                    profile.tank = profile.tank + 50;
+                                }
+                                else if (profile.role == "support")
+                                {
+                                    profile.support = profile.support + 50;
+                                }
+                            }
+                        }
+
+                        foreach (var player in Team1)
+                        {
+                            if (profile.userID == player.userID)
+                            {
+                                if (profile.role == "dps")
+                                {
+                                    profile.dps = profile.dps - 50;
+                                }
+                                else if (profile.role == "tank")
+                                {
+                                    profile.tank = profile.tank - 50;
+                                }
+                                else if (profile.role == "support")
+                                {
+                                    profile.support = profile.support - 50;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //Clear teams
+                foreach (var profile in allProfiles)
+                {
+                    profile.role = null;
+                    profile.queue = false;
+                    profile.queueSr = 0;
+
+                    await lite.SaveChangesAsync();
+                }
+                foreach (var player in queue)
+                {
+                    queue.Remove(player);
+
+                    await lite.SaveChangesAsync();
+                }
+                foreach (var player in dpsTeamList)
+                {
+                    dpsTeamList.Remove(player);
+                }
+                foreach (var player in tankTeamList)
+                {
+                    tankTeamList.Remove(player);
+                }
+                foreach (var player in supportTeamList)
+                {
+                    supportTeamList.Remove(player);
+                }
+
             }
         }
     }

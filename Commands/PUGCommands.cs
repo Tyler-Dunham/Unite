@@ -175,6 +175,38 @@ namespace Discord_Bot_Tutorial.Commands
             }
         }
 
+        [Command("status")]
+        [Description("Queue Status")]
+        public async Task Status(CommandContext ctx)
+        {
+            using (SqliteContext lite = new SqliteContext())
+            {
+                var author = ctx.Message.Author.Id;
+                var allProfiles = lite.Profiles;
+                var mention = ctx.User.Mention;
+
+                foreach (var profile in allProfiles)
+                {
+                    if (profile.userID == author)
+                    {
+                        if (profile.queue == true)
+                        {
+                            await ctx.Channel.SendMessageAsync($"{mention} You are in queue for {profile.role}.");
+                            return;
+                        }
+
+                        else if (profile.queue == false)
+                        {
+                            await ctx.Channel.SendMessageAsync($"{mention} You are not in queue.");
+                            return;
+                        }
+                    }
+                }
+
+                await ctx.Channel.SendMessageAsync("Profile not found.");
+            }
+        }
+
         [Command("leave")]
         [Aliases("l")]
         [Description("Leave the queue.")]
@@ -270,7 +302,7 @@ namespace Discord_Bot_Tutorial.Commands
 
 
             Random rnd = new Random();
-            int i = rnd.Next(0, maps.Length + 1);
+            int i = rnd.Next(0, maps.Length);
 
             string map = maps[i];
 

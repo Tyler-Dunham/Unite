@@ -142,14 +142,17 @@ namespace Discord_Bot_Tutorial.Commands
                                 if (profile.role == "dps")
                                 {
                                     profile.dps = profile.dps + 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "tank")
                                 {
                                     profile.tank = profile.tank + 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "support")
                                 {
                                     profile.support = profile.support + 50;
+                                    await lite.SaveChangesAsync();
                                 }
                             }
                         }
@@ -161,14 +164,17 @@ namespace Discord_Bot_Tutorial.Commands
                                 if (profile.role == "dps")
                                 {
                                     profile.dps = profile.dps - 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "tank")
                                 {
                                     profile.tank = profile.tank - 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "support")
                                 {
                                     profile.support = profile.support - 50;
+                                    await lite.SaveChangesAsync();
                                 }
                             }
                         }
@@ -187,14 +193,17 @@ namespace Discord_Bot_Tutorial.Commands
                                 if (profile.role == "dps")
                                 {
                                     profile.dps = profile.dps + 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "tank")
                                 {
                                     profile.tank = profile.tank + 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "support")
                                 {
                                     profile.support = profile.support + 50;
+                                    await lite.SaveChangesAsync();
                                 }
                             }
                         }
@@ -206,14 +215,17 @@ namespace Discord_Bot_Tutorial.Commands
                                 if (profile.role == "dps")
                                 {
                                     profile.dps = profile.dps - 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "tank")
                                 {
                                     profile.tank = profile.tank - 50;
+                                    await lite.SaveChangesAsync();
                                 }
                                 else if (profile.role == "support")
                                 {
                                     profile.support = profile.support - 50;
+                                    await lite.SaveChangesAsync();
                                 }
                             }
                         }
@@ -238,14 +250,17 @@ namespace Discord_Bot_Tutorial.Commands
                 foreach (var player in dpsTeamList)
                 {
                     dpsTeamList.Remove(player);
+                    await lite.SaveChangesAsync();
                 }
                 foreach (var player in tankTeamList)
                 {
                     tankTeamList.Remove(player);
+                    await lite.SaveChangesAsync();
                 }
                 foreach (var player in supportTeamList)
                 {
                     supportTeamList.Remove(player);
+                    await lite.SaveChangesAsync();
                 }
 
                 game = false;

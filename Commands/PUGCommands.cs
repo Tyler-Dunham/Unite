@@ -270,7 +270,7 @@ namespace Discord_Bot_Tutorial.Commands
 
 
             Random rnd = new Random();
-            int i = rnd.Next(0, maps.Length + 1);
+            int i = rnd.Next(0, maps.Length);
 
             string map = maps[i];
 

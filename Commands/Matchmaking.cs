@@ -30,8 +30,8 @@ namespace Discord_Bot_Tutorial.Commands
         static List<Queue> tankpair2 { get { Queue[] team = tankTeam; return new List<Queue> { team[1], team[2] }; } }
         static List<Queue> supportpair1 { get { Queue[] team = supportTeam; return new List<Queue> { team[0], team[3] }; } }
         static List<Queue> supportpair2 { get { Queue[] team = supportTeam; return new List<Queue> { team[1], team[2] }; } }
-        static List<Queue> Team1 { get {return dpspair1.Concat(tankpair1).Concat(supportpair1).ToList(); } }
-        static List<Queue> Team2 { get { return dpspair2.Concat(tankpair2).Concat(supportpair2).ToList(); } }
+        static List<Queue> Team1 { get {return tankpair1.Concat(dpspair2).Concat(supportpair2).ToList(); } }
+        static List<Queue> Team2 { get { return tankpair2.Concat(dpspair1).Concat(supportpair1).ToList(); } }
 
         [Command("mm")]
         [Description("Generates fairly balanced teams.")]
@@ -41,6 +41,7 @@ namespace Discord_Bot_Tutorial.Commands
             {
                 var allProfiles = lite.Profiles;
                 var queue = lite.playerQueue;
+                int queueCount = 12;
 
                 if (queue.Count() < 12)
                 {
@@ -48,34 +49,38 @@ namespace Discord_Bot_Tutorial.Commands
                     return;
                 }
 
-                //Adding player to role team
-                foreach (var player in queue)
+                while (queueCount != 0)
                 {
-                    if (player.role == "dps")
+                    //Adding player to role team
+                    foreach (var player in queue)
                     {
-                        dpsTeamList.Add(player);
-                    }
-                    else if (player.role == "tank")
-                    {
-                        tankTeamList.Add(player);
-                    }
-                    else //player.role == support
-                    {
-                        supportTeamList.Add(player);
+                        if (player.role == "dps")
+                        {
+                            dpsTeamList.Add(player);
+                            queueCount--;
+                        }
+                        else if (player.role == "tank")
+                        {
+                            tankTeamList.Add(player);
+                            queueCount--;
+                        }
+                        else //player.role == support
+                        {
+                            supportTeamList.Add(player);
+                            queueCount--;
+                        }
                     }
                 }
 
                 //For each role team, find the highest and lowest value, pair them, then the remaining two are the last
-
-
-                var Team1Average = Math.Round(Team1.Average(i => i.queueSr));
-                var Team2Average = Math.Round(Team2.Average(i => i.queueSr));
 
                 string[] maps = {"Blizzard World", "Busan", "Dorado", "Eichenwalde", "Hanamura", 
                         "Havana", "Hollywood", "Ilios", "Junkertown", "Kings Row", "Lijiang Tower", 
                     "Nepal", "Numbani", "Oasis", "Rialto", "Route 66", "Temple of Anubis", 
                     "Volskaya Industries", "Watchpoint: Gibraltar"};
 
+                var Team1Average = Math.Round(Team1.Average(i => i.queueSr));
+                var Team2Average = Math.Round(Team2.Average(i => i.queueSr));
 
                 Random rnd = new Random();
                 int i = rnd.Next(0, maps.Length + 1);
@@ -103,6 +108,7 @@ namespace Discord_Bot_Tutorial.Commands
 
                 game = true;
             }
+            return;
         }
 
         [Command("win")]
@@ -113,7 +119,7 @@ namespace Discord_Bot_Tutorial.Commands
                 await ctx.Channel.SendMessageAsync("A game is not in progress.");
                 return;
             }
-            if (winner != 0 || winner != 1 || winner != 2)
+            if (winner != 0 && winner != 1 && winner != 2)
             {
                 await ctx.Channel.SendMessageAsync("Not a valid winner.");
                 return;
@@ -250,17 +256,14 @@ namespace Discord_Bot_Tutorial.Commands
                 foreach (var player in dpsTeamList)
                 {
                     dpsTeamList.Remove(player);
-                    await lite.SaveChangesAsync();
                 }
                 foreach (var player in tankTeamList)
                 {
                     tankTeamList.Remove(player);
-                    await lite.SaveChangesAsync();
                 }
                 foreach (var player in supportTeamList)
                 {
                     supportTeamList.Remove(player);
-                    await lite.SaveChangesAsync();
                 }
 
                 game = false;

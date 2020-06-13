@@ -64,7 +64,7 @@ namespace Discord_Bot_Tutorial
             Commands.RegisterCommands<PUGCommands>();
             Commands.RegisterCommands<dbCommands>();
             Commands.RegisterCommands<Matchmaking>();
-            
+            Commands.RegisterCommands<funCommands>();
 
             await Client.ConnectAsync();
 

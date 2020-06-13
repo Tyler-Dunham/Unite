@@ -31,7 +31,7 @@ namespace Discord_Bot_Tutorial.Commands
         [Command("q")]
         [Aliases("queue")]
         [Description("Join the queue, in order to change roles, leave the queue first.")]
-        public async Task Q(CommandContext ctx, string role="view")
+        public async Task Q(CommandContext ctx, string role = "view")
         {
             using (SqliteContext lite = new SqliteContext())
             {
@@ -40,7 +40,6 @@ namespace Discord_Bot_Tutorial.Commands
                 var author = ctx.Message.Author.Id;
                 var queue = lite.playerQueue;
                 var allProfiles = lite.Profiles;
-
 
                 if (role == "view")
                 {
@@ -110,8 +109,7 @@ namespace Discord_Bot_Tutorial.Commands
 
                                 profile.queueSr = profile.dps;
                                 dps++;
-                                    
-                                
+
                                 if (dps == 4)
                                 {
                                     await ctx.Channel.SendMessageAsync("4/4 DPS slots are filled.");
@@ -173,6 +171,38 @@ namespace Discord_Bot_Tutorial.Commands
                 {
                     await ctx.Channel.SendMessageAsync("Not a valid role.");
                 }
+            }
+        }
+
+        [Command("status")]
+        [Description("Queue Status")]
+        public async Task Status(CommandContext ctx)
+        {
+            using (SqliteContext lite = new SqliteContext())
+            {
+                var author = ctx.Message.Author.Id;
+                var allProfiles = lite.Profiles;
+                var mention = ctx.User.Mention;
+
+                foreach (var profile in allProfiles)
+                {
+                    if (profile.userID == author)
+                    {
+                        if (profile.queue == true)
+                        {
+                            await ctx.Channel.SendMessageAsync($"{mention} You are in queue for {profile.role}.");
+                            return;
+                        }
+
+                        else if (profile.queue == false)
+                        {
+                            await ctx.Channel.SendMessageAsync($"{mention} You are not in queue.");
+                            return;
+                        }
+                    }
+                }
+
+                await ctx.Channel.SendMessageAsync("Profile not found.");
             }
         }
 
@@ -258,6 +288,49 @@ namespace Discord_Bot_Tutorial.Commands
 
                 await ctx.Channel.SendMessageAsync("Queue has been cleared.");
             }
+        }
+
+        [Command("map")]
+        [Description("Picks a map.")]
+        public async Task PickMap(CommandContext ctx)
+        {
+            string[] maps = {"Blizzard World", "Busan", "Dorado", "Eichenwalde", "Hanamura",
+                        "Havana", "Hollywood", "Ilios", "Junkertown", "Kings Row", "Lijiang Tower",
+                    "Nepal", "Numbani", "Oasis", "Rialto", "Route 66", "Temple of Anubis",
+                    "Volskaya Industries", "Watchpoint: Gibraltar"};
+
+
+            Random rnd = new Random();
+            int i = rnd.Next(0, maps.Length);
+
+            string map = maps[i];
+
+            await ctx.Channel.SendMessageAsync($"{map}");
+        }
+
+        [Command("coin")]
+        [Description("Flips a coin")]
+        public async Task FlipCoin(CommandContext ctx)
+        {
+            string[] coin = { "Heads", "Tails" };
+
+            Random rnd = new Random();
+            int flip = rnd.Next(0, coin.Length);
+
+            await ctx.Channel.SendMessageAsync($"{coin[flip]}");
+        }
+
+        [Command("schedule")]
+        [RequireRoles(RoleCheckMode.Any, "Scheduler")]
+        [Description("Schedule a pug")]
+        public async Task Schedule(CommandContext ctx, TimeSpan pugTimeSpan)
+        {
+            var thumbsUpEmoji = DiscordEmoji.FromName(ctx.Client, ":+1:");
+            var puggers = ctx.Guild.Roles.Values.First(x => x.Name == "Puggers");
+            string pugTime = Convert.ToString(DateTime.Now.Add(pugTimeSpan).ToString("HH:mm"));
+
+            var pugScheduleMessage = await ctx.Channel.SendMessageAsync($"{puggers.Mention} Pugs scheduled for {pugTime} EST");
+            await pugScheduleMessage.CreateReactionAsync(thumbsUpEmoji);
         }
     }
 }

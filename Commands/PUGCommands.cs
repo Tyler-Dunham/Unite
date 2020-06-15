@@ -19,6 +19,7 @@ using System.Threading.Channels;
 using System.Threading;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Linq.Expressions;
+using DSharpPlus.Net.Models;
 
 namespace Discord_Bot_Tutorial.Commands
 {
@@ -193,16 +194,10 @@ namespace Discord_Bot_Tutorial.Commands
                             await ctx.Channel.SendMessageAsync($"{mention} You are in queue for {profile.role}.");
                             return;
                         }
-
-                        else if (profile.queue == false)
-                        {
-                            await ctx.Channel.SendMessageAsync($"{mention} You are not in queue.");
-                            return;
-                        }
                     }
                 }
 
-                await ctx.Channel.SendMessageAsync("Profile not found.");
+                await ctx.Channel.SendMessageAsync($"{mention} You are not in queue.");
             }
         }
 
@@ -332,5 +327,50 @@ namespace Discord_Bot_Tutorial.Commands
             var pugScheduleMessage = await ctx.Channel.SendMessageAsync($"{puggers.Mention} Pugs scheduled for {pugTime} EST");
             await pugScheduleMessage.CreateReactionAsync(thumbsUpEmoji);
         }
+
+        [Command("mtd")]
+        [RequireRoles(RoleCheckMode.Any, "Mover")]
+        [Description("Moves all players in Team 1 and Team 2 back to draft channel.")]
+        public async Task MTD(CommandContext ctx)
+        {
+            var team1Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 1");
+            var team2Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 2");
+            var draftChannel = ctx.Guild.Channels.Values.First(x => x.Name == "Draft Channel");
+
+            var team1Users = team1Channel.Users;
+            var team2Users = team2Channel.Users;
+
+            var moveUsersTasks = new List<Task>();
+            var allUsers = team1Users.Union(team2Users);
+            moveUsersTasks.AddRange(allUsers.Select(member => draftChannel.PlaceMemberAsync(member)));
+            await Task.WhenAll(moveUsersTasks);
+        }
+
+        [Command("captains")]
+        [Description("Pick 2 random captains from draft channel.")]
+        public async Task Captains(CommandContext ctx)
+        {
+            var draftChannel = ctx.Guild.Channels.Values.First(x => x.Name == "Draft Channel");
+            var draftChannelUsers = draftChannel.Users.ToList();
+
+            Random rnd = new Random();
+
+            int i = rnd.Next(draftChannelUsers.Count);
+            int x = rnd.Next(draftChannelUsers.Count);
+
+            while (x == i)
+            {
+                x = rnd.Next(draftChannelUsers.Count);
+            }
+
+            Console.WriteLine($"{i} , {x}");
+
+            var captainOne = draftChannelUsers[i];
+            var captainTwo = draftChannelUsers[x];
+
+            await ctx.Channel.SendMessageAsync($"Your captains are: {captainOne.Mention} and {captainTwo.Mention}.");
+        }
+
+        
     }
 }

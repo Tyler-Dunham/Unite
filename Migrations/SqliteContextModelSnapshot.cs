@@ -56,6 +56,9 @@ namespace Discord_Bot_Tutorial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Team")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("queueSr")
                         .HasColumnType("INTEGER");
 

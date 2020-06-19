@@ -19,6 +19,8 @@ using System.Threading.Channels;
 using System.Threading;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Linq.Expressions;
+using DSharpPlus.Net.Models;
+using System.Net.WebSockets;
 
 namespace Discord_Bot_Tutorial.Commands
 {
@@ -40,7 +42,6 @@ namespace Discord_Bot_Tutorial.Commands
                 var author = ctx.Message.Author.Id;
                 var queue = lite.playerQueue;
                 var allProfiles = lite.Profiles;
-
 
                 if (role == "view")
                 {
@@ -194,16 +195,10 @@ namespace Discord_Bot_Tutorial.Commands
                             await ctx.Channel.SendMessageAsync($"{mention} You are in queue for {profile.role}.");
                             return;
                         }
-
-                        else if (profile.queue == false)
-                        {
-                            await ctx.Channel.SendMessageAsync($"{mention} You are not in queue.");
-                            return;
-                        }
                     }
                 }
 
-                await ctx.Channel.SendMessageAsync("Profile not found.");
+                await ctx.Channel.SendMessageAsync($"{mention} You are not in queue.");
             }
         }
 
@@ -308,5 +303,55 @@ namespace Discord_Bot_Tutorial.Commands
 
             await ctx.Channel.SendMessageAsync($"{map}");
         }
+
+        [Command("coin")]
+        [Description("Flips a coin")]
+        public async Task FlipCoin(CommandContext ctx)
+        {
+            string[] coin = { "Heads", "Tails" };
+
+            Random rnd = new Random();
+            int flip = rnd.Next(0, coin.Length);
+
+            await ctx.Channel.SendMessageAsync($"{coin[flip]}");
+        }
+
+        [Command("schedule")]
+        [RequireRoles(RoleCheckMode.Any, "Scheduler")]
+        [Description("Schedule a pug")]
+        public async Task Schedule(CommandContext ctx, TimeSpan pugTimeSpan)
+        {
+            var thumbsUpEmoji = DiscordEmoji.FromName(ctx.Client, ":+1:");
+            var puggers = ctx.Guild.Roles.Values.First(x => x.Name == "Puggers");
+            string pugTime = Convert.ToString(DateTime.Now.Add(pugTimeSpan).ToString("HH:mm"));
+
+            var pugScheduleMessage = await ctx.Channel.SendMessageAsync($"{puggers.Mention} Pugs scheduled for {pugTime} EST");
+            await pugScheduleMessage.CreateReactionAsync(thumbsUpEmoji);
+        }
+
+        [Command("captains")]
+        [Description("Pick 2 random captains from draft channel.")]
+        public async Task Captains(CommandContext ctx)
+        {
+            var draftChannel = ctx.Guild.Channels.Values.First(x => x.Name == "Draft Channel");
+            var draftChannelUsers = draftChannel.Users.ToList();
+
+            Random rnd = new Random();
+
+            int i = rnd.Next(draftChannelUsers.Count);
+            int x = rnd.Next(draftChannelUsers.Count);
+
+            while (x == i)
+            {
+                x = rnd.Next(draftChannelUsers.Count);
+            }
+
+            var captainOne = draftChannelUsers[i];
+            var captainTwo = draftChannelUsers[x];
+
+            await ctx.Channel.SendMessageAsync($"Your captains are: {captainOne.Mention} and {captainTwo.Mention}.");
+        }
+
+        
     }
 }

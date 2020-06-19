@@ -10,5 +10,6 @@ namespace Discord_Bot_Tutorial.Models
         public string userName { get; set; }
         public string role { get; set; }
         public int queueSr { get; set; }
+        public int Team { get; set; }
     }
 }

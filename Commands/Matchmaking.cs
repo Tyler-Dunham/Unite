@@ -14,7 +14,7 @@ namespace Discord_Bot_Tutorial.Commands
 {
     class Matchmaking : BaseCommandModule
     {
-        bool game = false;
+        public static bool game = false;
 
         static List<Queue> dpsTeamList = new List<Queue>();
         static List<Queue> tankTeamList = new List<Queue>();
@@ -93,11 +93,15 @@ namespace Discord_Bot_Tutorial.Commands
                 foreach (var player in Team1)
                 {
                     Team1Message = Team1Message + "\n" + $"{player.userName,-25} : {player.role,10} : {player.queueSr}";
+                    player.Team = 1;
+                    await lite.SaveChangesAsync();
                 }
 
                 foreach (var player in Team2)
                 {
                     Team2Message = Team2Message + "\n" + $"{player.userName,-25} : {player.role,10} : {player.queueSr}";
+                    player.Team = 2;
+                    await lite.SaveChangesAsync();
                 }
 
                 await ctx.Channel.SendMessageAsync(Team1Message + "\n" + "\n" + Team2Message
@@ -265,11 +269,74 @@ namespace Discord_Bot_Tutorial.Commands
                 {
                     supportTeamList.Remove(player);
                 }
+                foreach (var player in Team1)
+                {
+                    player.Team = 0;
+                }
+                foreach (var player in Team2)
+                {
+                    player.Team = 0;
+                }
 
                 game = false;
 
                 //Send Confirmation message
                 await ctx.Channel.SendMessageAsync("Sr's have been updated.");
+            }
+        }
+        [Command("mtd")]
+        [RequireRoles(RoleCheckMode.Any, "Mover")]
+        [Description("Moves all players in Team 1 and Team 2 back to draft channel.")]
+        public async Task MTD(CommandContext ctx)
+        {
+            var team1Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 1");
+            var team2Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 2");
+            var draftChannel = ctx.Guild.Channels.Values.First(x => x.Name == "Draft Channel");
+
+            var team1Users = team1Channel.Users;
+            var team2Users = team2Channel.Users;
+
+            var moveUsersTasks = new List<Task>();
+            var allUsers = team1Users.Union(team2Users);
+            moveUsersTasks.AddRange(allUsers.Select(member => draftChannel.PlaceMemberAsync(member)));
+            await Task.WhenAll(moveUsersTasks);
+        }
+
+        [Command("mtt")]
+        [Description("Move players to their respective team.")]
+        public async Task MTT(CommandContext ctx)
+        {
+            using (SqliteContext lite = new SqliteContext())
+            {
+                if (game == false)
+                {
+                    await ctx.Channel.SendMessageAsync("A game is not in progress, no teams are assigned.");
+                    return;
+                }
+
+                var allProfiles = lite.Profiles;
+                var Queue = lite.playerQueue;
+                var team1Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 1");
+                var team2Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 2");
+                var draftChannel = ctx.Guild.Channels.Values.First(x => x.Name == "Draft Channel");
+                var draftChannelUsers = draftChannel.Users;
+
+                foreach (var user in draftChannelUsers)
+                {
+                    foreach (var player in Queue)
+                    {
+                        if (user.Id == player.userID && player.Team == 1)
+                        {
+                            await team1Channel.PlaceMemberAsync(user);
+                        }
+                        else if (user.Id == player.userID && player.Team == 2)
+                        {
+                            await team2Channel.PlaceMemberAsync(user);
+                        }
+                    }
+                }
+
+                await ctx.Channel.SendMessageAsync("Players have been moved.");
             }
         }
     }

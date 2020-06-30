@@ -55,5 +55,7 @@ namespace Discord_Bot_Tutorial.Commands
 
             await ctx.Channel.SendMessageAsync($"{mention} is {sexualities[randomChoice]} {flushedEmoji}.");
         }
+
+        
     }
 }

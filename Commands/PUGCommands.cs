@@ -9,15 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Discord_Bot_Tutorial.Models;
 using System.Threading.Channels;
 using System.Threading;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using System.Linq.Expressions;
 using DSharpPlus.Net.Models;
 
@@ -328,24 +324,6 @@ namespace Discord_Bot_Tutorial.Commands
             await pugScheduleMessage.CreateReactionAsync(thumbsUpEmoji);
         }
 
-        [Command("mtd")]
-        [RequireRoles(RoleCheckMode.Any, "Mover")]
-        [Description("Moves all players in Team 1 and Team 2 back to draft channel.")]
-        public async Task MTD(CommandContext ctx)
-        {
-            var team1Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 1");
-            var team2Channel = ctx.Guild.Channels.Values.First(x => x.Name == "Team 2");
-            var draftChannel = ctx.Guild.Channels.Values.First(x => x.Name == "Draft Channel");
-
-            var team1Users = team1Channel.Users;
-            var team2Users = team2Channel.Users;
-
-            var moveUsersTasks = new List<Task>();
-            var allUsers = team1Users.Union(team2Users);
-            moveUsersTasks.AddRange(allUsers.Select(member => draftChannel.PlaceMemberAsync(member)));
-            await Task.WhenAll(moveUsersTasks);
-        }
-
         [Command("captains")]
         [Description("Pick 2 random captains from draft channel.")]
         public async Task Captains(CommandContext ctx)
@@ -362,8 +340,6 @@ namespace Discord_Bot_Tutorial.Commands
             {
                 x = rnd.Next(draftChannelUsers.Count);
             }
-
-            Console.WriteLine($"{i} , {x}");
 
             var captainOne = draftChannelUsers[i];
             var captainTwo = draftChannelUsers[x];

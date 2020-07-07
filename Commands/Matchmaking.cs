@@ -392,5 +392,7 @@ namespace Discord_Bot_Tutorial.Commands
                 await ctx.Channel.SendMessageAsync("Players have been moved.");
             }
         }
+
+
     }
 }

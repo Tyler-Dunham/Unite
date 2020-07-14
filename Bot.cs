@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography.X509Certificates;
@@ -45,6 +46,7 @@ namespace Discord_Bot_Tutorial
             Client = new DiscordClient(config);
 
             Client.Ready += OnClientReady;
+            Client.Heartbeated += CheckBanDatabaseOnHeartbeat;
 
             Client.UseInteractivity(new InteractivityConfiguration
             {
@@ -66,6 +68,7 @@ namespace Discord_Bot_Tutorial
             Commands.RegisterCommands<dbCommands>();
             Commands.RegisterCommands<Matchmaking>();
             Commands.RegisterCommands<funCommands>();
+            Commands.RegisterCommands<usefulCommands>();
 
             await Client.ConnectAsync();
 
@@ -76,5 +79,47 @@ namespace Discord_Bot_Tutorial
         {
             return Task.CompletedTask;
         }
+
+        private async Task CheckBanDatabaseOnHeartbeat(HeartbeatEventArgs e)
+        {
+            if (Client.Guilds.Count == 0)
+            {
+                return;
+            }
+
+            using (SqliteContext lite = new SqliteContext())
+            {
+                var bans = lite.Bans;
+                DateTime currentTime = DateTime.Now;
+                var guild = Client.Guilds.Values.FirstOrDefault(x => x.Name == "Bot Testing");
+                var members = guild.Members.Values;
+                var roles = guild.Roles.Values;
+                var straightJacket = roles.First(x => x.Name == "Straight Jacket");
+                List<ulong> userIDs = new List<ulong>();
+
+                foreach (var user in bans)
+                {
+                    if (user.unbanTime <= currentTime)
+                    {
+                        userIDs.Add(user.userID);
+                        lite.Remove(user);
+                        await lite.SaveChangesAsync();
+                    }
+                }
+
+                foreach (var member in members)
+                {
+                    foreach (var id in userIDs)
+                    {
+                        if (member.Id == id)
+                        {
+                            await member.RevokeRoleAsync(straightJacket);
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 }

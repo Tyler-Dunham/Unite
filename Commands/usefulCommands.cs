@@ -48,20 +48,6 @@ namespace Discord_Bot_Tutorial.Commands
 
                 await user.GrantRoleAsync(straightJacket);
                 await ctx.Channel.SendMessageAsync($"{user.Username} has been temp banned until {userBan.unbanTime.ToString("MM/dd/yyy HH:mm")}");
-
-                await Task.Delay(DateTime.Compare(userBan.banTime, userBan.unbanTime));
-
-                await user.RevokeRoleAsync(straightJacket);
-                
-                foreach (var member in bans)
-                {
-                    if (member.userID == userID)
-                    {
-                        bans.Remove(member);
-                    }
-                }
-
-                await ctx.Channel.SendMessageAsync($"{user.Mention} has been unbanned.");
             }
         }
 

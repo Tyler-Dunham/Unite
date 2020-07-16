@@ -19,7 +19,7 @@ namespace Discord_Bot_Tutorial.Commands
         [Command("tempban")]
         [RequireRoles(RoleCheckMode.Any, "Moderator", "Admin")]
         [Description("Temp ban a user. This gives them a role for a period of time that doesn't allow them to type in any channels.")]
-        public async Task SoftBan(CommandContext ctx, DiscordMember user, TimeSpan banLength)
+        public async Task SoftBan(CommandContext ctx, DiscordMember user, TimeSpan banLength, [RemainingText] string banReason)
         {
             using (SqliteContext lite = new SqliteContext())
             {
@@ -43,11 +43,38 @@ namespace Discord_Bot_Tutorial.Commands
                 userBan.userName = user.Username;
                 userBan.banTime = DateTime.Now;
                 userBan.unbanTime = userBan.banTime + banLength;
+                userBan.banReason = banReason;
                 bans.Add(userBan);
                 await lite.SaveChangesAsync();
 
                 await user.GrantRoleAsync(straightJacket);
-                await ctx.Channel.SendMessageAsync($"{user.Username} has been temp banned until {userBan.unbanTime.ToString("MM/dd/yyy HH:mm")}");
+                await ctx.Channel.SendMessageAsync($"{user.Username} has been temp banned until {userBan.unbanTime.ToString("HH:mm MM/dd/yyyy")}");
+            }
+        }
+
+        [Command("removeban")]
+        [RequireRoles(RoleCheckMode.Any, "Moderator", "Admin")]
+        [Description("Unban someone's temp ban that may have been accidental, too long, or falsely given.")]
+        public async Task RemoveBan(CommandContext ctx, DiscordMember user, [RemainingText] string reason)
+        {
+            using (SqliteContext lite = new SqliteContext())
+            {
+                var userID = user.Id;
+                var bans = lite.Bans;
+                var straightJacket = ctx.Guild.Roles.Values.First(x => x.Name == "Straight Jacket");
+                
+                foreach (var ban in bans)
+                {
+                    if (ban.userID == userID)
+                    {
+                        bans.Remove(ban);
+                        await lite.SaveChangesAsync();
+
+                        await user.RevokeRoleAsync(straightJacket);
+
+                        await ctx.Channel.SendMessageAsync($"Ban has been removed from {user.Username}.");
+                    }
+                }
             }
         }
 

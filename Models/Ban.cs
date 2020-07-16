@@ -10,5 +10,6 @@ namespace Discord_Bot_Tutorial.Models
         public string userName { get; set; }
         public DateTime banTime { get; set; }
         public DateTime unbanTime { get; set; }
+        public string banReason{get; set;}
     }
 }

@@ -22,6 +22,9 @@ namespace Discord_Bot_Tutorial.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("banReason")
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("banTime")
                         .HasColumnType("TEXT");
 

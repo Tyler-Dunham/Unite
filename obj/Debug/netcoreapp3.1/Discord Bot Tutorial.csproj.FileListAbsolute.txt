@@ -49,10 +49,11 @@ C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\bin\Debug\netcoreapp3.1\r
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\bin\Debug\netcoreapp3.1\runtimes\win-x64\native\e_sqlite3.dll
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\bin\Debug\netcoreapp3.1\runtimes\win-x86\native\e_sqlite3.dll
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.csprojAssemblyReference.cache
-C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.csproj.CoreCompileInputs.cache
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.AssemblyInfoInputs.cache
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.AssemblyInfo.cs
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.csproj.CopyComplete
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.dll
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.pdb
 C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.genruntimeconfig.cache
+C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\bin\Debug\netcoreapp3.1\Figgle.dll
+C:\Coding\C#\Discord Bot Tutorial\Discord Bot Tutorial\obj\Debug\netcoreapp3.1\Discord Bot Tutorial.csproj.CoreCompileInputs.cache

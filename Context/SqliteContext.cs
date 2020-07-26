@@ -8,7 +8,6 @@ namespace Discord_Bot_Tutorial.Context
 {
     public class SqliteContext : DbContext
     {
-        public DbSet<Ban> Bans { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Queue> playerQueue { get; set; }
 
